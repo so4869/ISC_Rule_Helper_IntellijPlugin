@@ -1,0 +1,45 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>im.flare.ISC_Rule_Helper_IntellijPlugin</id>
+
+    <!-- Public plugin name should be written in Title Case.
+     Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-name -->
+    <name>ISC_Rule_Helper</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor url="https://so4869.tistory.com">Flare</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-description -->
+    <description><![CDATA[
+        Enter short description for your plugin here.<br>
+        <em>most HTML tags may be used</em>
+        ]]></description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.java</depends>
+
+    <resource-bundle>messages.MyMessageBundle</resource-bundle>
+
+    <!-- Extensions defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="MyToolWindow" factoryClass="im.flare.MyToolWindowFactory"
+                    icon="AllIcons.Toolwindows.ToolWindowPalette"/>
+        <configurationType implementation="im.flare.runconfig.IscRunConfigurationType"/>
+        <configurationType implementation="im.flare.runconfig.IscCloudRuleRunConfigurationType"/>
+    </extensions>
+
+    <actions>
+        <group id="im.flare.ValidateRuleGroup"
+               class="im.flare.action.ValidateRuleGroup"
+               text="Validate Rule"
+               popup="true">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+        </group>
+    </actions>
+
+</idea-plugin>
