@@ -32,6 +32,9 @@ class IscCloudRuleSettingsEditor : SettingsEditor<IscCloudRuleRunConfiguration>(
     private val staticRadio = JBRadioButton("Static value")
     private val subDirExpressionField = JBTextField()
 
+    private val outputFormatTxtRadio = JBRadioButton("Plain text (.validator.txt)")
+    private val outputFormatMdRadio  = JBRadioButton("Markdown (.validator.md)")
+
     private val validatorExeField = TextFieldWithBrowseButton().apply {
         addBrowseFolderListener(
             "Select Validator Executable",
@@ -53,6 +56,9 @@ class IscCloudRuleSettingsEditor : SettingsEditor<IscCloudRuleRunConfiguration>(
     private val subDirOptionsPanel: JPanel
 
     init {
+        ButtonGroup().apply { add(outputFormatTxtRadio); add(outputFormatMdRadio) }
+        outputFormatMdRadio.isSelected = true
+
         ButtonGroup().apply { add(datetimeRadio); add(staticRadio) }
         datetimeRadio.isSelected = true
 
@@ -93,7 +99,7 @@ class IscCloudRuleSettingsEditor : SettingsEditor<IscCloudRuleRunConfiguration>(
         )
         val validatorNote = ComponentPanelBuilder.createCommentComponent(
             "Path to the SailPoint Rule Validator executable. " +
-                "Invoked as: <executable> --file <xml-file>. Output saved as <FILE_NAME>.validator.out.",
+                "Invoked as: <executable> --file <xml-file>.",
             true
         )
 
@@ -132,6 +138,9 @@ class IscCloudRuleSettingsEditor : SettingsEditor<IscCloudRuleRunConfiguration>(
             .addComponent(validatorNote)
             .addLabeledComponent("Java Home:", javaHomeField, true)
             .addComponent(javaHomeNote)
+            .addSeparator()
+            .addComponent(outputFormatTxtRadio)
+            .addComponent(outputFormatMdRadio)
             .panel
             .apply {
                 border = BorderFactory.createCompoundBorder(
@@ -164,6 +173,11 @@ class IscCloudRuleSettingsEditor : SettingsEditor<IscCloudRuleRunConfiguration>(
         }
         subDirExpressionField.text = config.subDirExpression
         subDirOptionsPanel.isVisible = config.createSubDir
+
+        when (config.validatorOutputFormat) {
+            ValidatorOutputFormat.TXT -> outputFormatTxtRadio.isSelected = true
+            ValidatorOutputFormat.MD  -> outputFormatMdRadio.isSelected = true
+        }
     }
 
     override fun applyEditorTo(config: IscCloudRuleRunConfiguration) {
@@ -175,5 +189,6 @@ class IscCloudRuleSettingsEditor : SettingsEditor<IscCloudRuleRunConfiguration>(
         config.createSubDir = createSubDirCheckbox.isSelected
         config.subDirMode = if (datetimeRadio.isSelected) SubDirMode.DATETIME else SubDirMode.STATIC
         config.subDirExpression = subDirExpressionField.text.trim()
+        config.validatorOutputFormat = if (outputFormatTxtRadio.isSelected) ValidatorOutputFormat.TXT else ValidatorOutputFormat.MD
     }
 }

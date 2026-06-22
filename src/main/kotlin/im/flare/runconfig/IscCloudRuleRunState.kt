@@ -17,6 +17,7 @@ import im.flare.rule.IscClassScanner
 import im.flare.rule.IscRuleInfo
 import im.flare.rule.IscSourceExtractor
 import im.flare.rule.IscTemplateProcessor
+import im.flare.rule.ansiToMarkdown
 import im.flare.rule.stripAnsi
 import java.io.File
 import java.io.OutputStream
@@ -119,10 +120,11 @@ class IscCloudRuleRunState(
                     xmlFile.writeText(xml, Charsets.UTF_8)
                     console.info("  [OK] ${info.qualifiedName} → $xmlFileName\n")
 
+                    val outExt = if (config.validatorOutputFormat == ValidatorOutputFormat.MD) "md" else "txt"
                     runValidator(
                         config.validatorExecutable,
                         xmlFile,
-                        File(outputDir, "$xmlFileName.validator.out"),
+                        File(outputDir, "$xmlFileName.validator.$outExt"),
                         console
                     )
                     successCount++
@@ -157,7 +159,8 @@ class IscCloudRuleRunState(
                 .directory(execFile.parentFile)
                 .redirectErrorStream(true)
             config.resolveJavaHome(environment.project)?.let { applyJavaEnv(pb, it) }
-            val output = pb.start().also { it.waitFor() }.inputStream.bufferedReader().readText().stripAnsi()
+            val raw = pb.start().also { it.waitFor() }.inputStream.bufferedReader().readText()
+            val output = if (config.validatorOutputFormat == ValidatorOutputFormat.MD) raw.ansiToMarkdown() else raw.stripAnsi()
             outFile.writeText(output, Charsets.UTF_8)
             console.info("  [Validator] ${outFile.name} written\n")
         } catch (e: Exception) {

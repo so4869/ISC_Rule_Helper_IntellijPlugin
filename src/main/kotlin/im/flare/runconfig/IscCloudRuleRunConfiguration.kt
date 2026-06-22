@@ -11,6 +11,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import org.jdom.Element
 
 enum class SubDirMode { DATETIME, STATIC }
+enum class ValidatorOutputFormat { TXT, MD }
 
 class IscCloudRuleRunConfiguration(
     project: Project,
@@ -26,6 +27,8 @@ class IscCloudRuleRunConfiguration(
     var createSubDir: Boolean = false
     var subDirMode: SubDirMode = SubDirMode.DATETIME
     var subDirExpression: String = ""
+
+    var validatorOutputFormat: ValidatorOutputFormat = ValidatorOutputFormat.MD
 
     fun getBasePackageList(): List<String> =
         basePackages.split(",").map { it.trim() }.filter { it.isNotEmpty() }
@@ -46,6 +49,9 @@ class IscCloudRuleRunConfiguration(
             ?.let { runCatching { SubDirMode.valueOf(it) }.getOrNull() }
             ?: SubDirMode.DATETIME
         subDirExpression = element.getAttributeValue(ATTR_SUB_DIR_EXPR) ?: ""
+        validatorOutputFormat = element.getAttributeValue(ATTR_VALIDATOR_OUTPUT_FORMAT)
+            ?.let { runCatching { ValidatorOutputFormat.valueOf(it) }.getOrNull() }
+            ?: ValidatorOutputFormat.MD
     }
 
     override fun writeExternal(element: Element) {
@@ -57,6 +63,7 @@ class IscCloudRuleRunConfiguration(
         element.setAttribute(ATTR_CREATE_SUB_DIR, createSubDir.toString())
         element.setAttribute(ATTR_SUB_DIR_MODE, subDirMode.name)
         element.setAttribute(ATTR_SUB_DIR_EXPR, subDirExpression)
+        element.setAttribute(ATTR_VALIDATOR_OUTPUT_FORMAT, validatorOutputFormat.name)
     }
 
     override fun getConfigurationEditor() = IscCloudRuleSettingsEditor()
@@ -79,5 +86,6 @@ class IscCloudRuleRunConfiguration(
         private const val ATTR_CREATE_SUB_DIR = "createSubDir"
         private const val ATTR_SUB_DIR_MODE = "subDirMode"
         private const val ATTR_SUB_DIR_EXPR = "subDirExpression"
+        private const val ATTR_VALIDATOR_OUTPUT_FORMAT = "validatorOutputFormat"
     }
 }
