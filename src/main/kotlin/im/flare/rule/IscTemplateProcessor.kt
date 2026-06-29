@@ -32,7 +32,7 @@ object IscTemplateProcessor {
             .replace("\$TEMPLATE.NAME", info.name ?: "")
             .replace("\$TEMPLATE.TYPE", info.type ?: "")
             .let { addRuleAttributes(it, existingId, createdMs, modifiedMs) }
-            .let { SOURCE_PATTERN.replace(it, "<Source><![CDATA[\n$source\n]]></Source>") }
+            .let { xml -> SOURCE_PATTERN.replace(xml) { "<Source><![CDATA[\n$source\n]]></Source>" } }
     }
 
     private fun addRuleAttributes(

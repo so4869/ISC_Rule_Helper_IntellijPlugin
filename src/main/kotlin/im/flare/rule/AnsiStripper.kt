@@ -93,6 +93,7 @@ fun String.ansiToMarkdown(): String {
                 '&'  -> out.append("&amp;")
                 else -> out.append(c)
             }
+            i++
         }
     }
 
