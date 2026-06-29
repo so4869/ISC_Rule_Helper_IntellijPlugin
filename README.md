@@ -1,5 +1,7 @@
 # ISC_Rule_Helper
 
+**Distribution:** `build/distributions/ISC_Rule_Helper-1.3.1.zip`
+
 IntelliJ IDEA plugin for SailPoint IdentityNow (ISC) rule development.  
 Automates converting Java rule classes into SailPoint Rule XML, running the SailPoint Rule Validator, and fetching OAuth2 tokens.
 
